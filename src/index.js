@@ -14,7 +14,7 @@ searchBox.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));    //* 
 // searchBox.addEventListener('input', onSearch);    //* Все працює, тільки без debounce
 
 function onSearch(e) {
-    fetchCountries(e.currentTarget.value).then(data => {
+    fetchCountries(e.target.value).then(data => {
         if (data.length > 10) {
             Notify.info('Too many matches found. Please enter a more specific name.');
         };
