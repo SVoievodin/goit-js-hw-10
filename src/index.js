@@ -4,36 +4,34 @@ import { fetchCountries } from './fetchCountries.js'
 
 var debounce = require('lodash.debounce');
 const DEBOUNCE_DELAY = 300;
-
 const searchBox = document.getElementById('search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
-
-searchBox.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));    //* Не працює :((
-// searchBox.addEventListener('input', onSearch);    //* Все працює, тільки без debounce
+searchBox.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(e) {
-    fetchCountries(e.target.value).then(data => {
-        if (data.length > 10) {
-            Notify.info('Too many matches found. Please enter a more specific name.');
-        };
-        if (data.length <= 10) {
-            countryList.innerHTML = countryListMarkup(data);
+    if (e.target.value.trim() !== '') {
+        fetchCountries(e.target.value.trim()).then(data => {
+            if (data.length > 10) {
+                Notify.info('Too many matches found. Please enter a more specific name.');
+            };
+            if (data.length <= 10) {
+                countryList.innerHTML = countryListMarkup(data);
+                countryInfo.innerHTML = "";
+            }
+            if (data.length === 1) {
+                countryInfo.innerHTML = countryInfoMarkup(data);
+                countryList.innerHTML = "";
+            }
+            console.log(data);
+        }).catch(err => {
             countryInfo.innerHTML = "";
-        }
-        if (data.length === 1) {
-            countryInfo.innerHTML = countryInfoMarkup(data);
             countryList.innerHTML = "";
-        }
-        console.log(data);
-    }).catch(err => {
-        countryInfo.innerHTML = "";
-        countryList.innerHTML = "";
-        console.log(err);
-        Notify.failure('Oops, there is no country with that name');
-    });
-
+            console.log(err);
+            Notify.failure('Oops, there is no country with that name');
+        });
+    }
 };
 
 function countryListMarkup(arr) {
